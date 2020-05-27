@@ -1,11 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo list</title>
+    <style>
+        body {
+            font-family: monospace;
+        }
+
+        ul li {
+            line-height: 30px;
+        }
+        
+    </style>
 </head>
+
 <body>
-  
+
+    <div id="app">
+        <h3> Todo list</h3>
+
+        <div>
+            <input type="text" v-model="toAdd"> <button v-on:click="save">Save</button>
+        </div>
+
+        <ul>
+            <li v-for="item in list" style="list-style: none;">
+                <div v-on:click="clickOnItem(item) ">
+                    <span v-if="item.checked">[X]</span>
+                    <span v-else>[ ]</span>
+                    {{ item.title }}
+                </div>
+
+            </li>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            methods: {
+                clickOnItem: function (item) {
+                    item.checked = !item.checked;
+                    this.saveToStorage();
+                },
+                saveToStorage: function () {
+                    localStorage.setItem('todo-list', JSON.stringify(this.list));
+                },
+                save: function () {
+                    this.list.push({ title: this.toAdd, checked: false });
+                    this.toAdd = '';
+                    this.saveToStorage();
+                }
+            },
+            mounted: function () {
+                this.list = JSON.parse(localStorage.getItem('todo-list')) || [];
+            },
+            data: function () {
+                return {
+                    list: [],
+                    toAdd: ''
+                }
+            }
+        })
+    </script>
+
+
 </body>
+
 </html>
